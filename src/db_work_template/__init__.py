@@ -1,4 +1,4 @@
-from src.db_work_template.db.db import (
+from db_work_template.db.db import (
     get_session,
     get_session_hml,
     update_escrituracao_status,
