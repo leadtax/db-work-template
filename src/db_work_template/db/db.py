@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import os
 
 from typing import Generator
@@ -5,6 +6,10 @@ from typing import Generator
 
 from db_work_template.db.model import Documento
 from sqlmodel import Session, create_engine, select
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import select
+from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 
@@ -17,15 +22,12 @@ BASEPORTAL = os.getenv("BASEPORTAL")
 engine = create_engine(DATABASE_URL_MYSQL + BASEAPI)
 my_sql_hml = create_engine(DATABASE_URL_MYSQL + BASEPORTAL)
 
+async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
-def get_session() -> Generator[Session, None, None]:
-    with Session(engine) as session:
+@contextmanager
+def get_session(_engine) -> Generator[Session, None, None]:
+    with Session(_engine) as session:
         yield session
-
-
-def get_session_hml() -> Generator[Session, None, None]:
-    with Session(my_sql_hml) as session:
-        return session
 
 
 def update_escrituracao_status(session: Session, status: bool, mensagem: str, _id: int):
