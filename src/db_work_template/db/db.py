@@ -1,17 +1,14 @@
-from contextlib import contextmanager
 import os
-
+from contextlib import contextmanager
 from typing import Generator
 
+from dotenv import load_dotenv
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
+from sqlmodel import Session, create_engine
 
 from db_work_template.db.model import Documento
-from sqlmodel import Session, create_engine, select
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import select
-from contextlib import asynccontextmanager
-
-from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
@@ -23,6 +20,7 @@ engine = create_engine(DATABASE_URL_MYSQL + BASEAPI)
 my_sql_hml = create_engine(DATABASE_URL_MYSQL + BASEPORTAL)
 
 async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
 
 @contextmanager
 def get_session(_engine) -> Generator[Session, None, None]:

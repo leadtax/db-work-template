@@ -1,7 +1,9 @@
 from datetime import date, datetime
+from typing import Optional
+
 import sqlalchemy as sa
 from sqlmodel import Field, SQLModel
-from typing import  Optional
+
 
 class Documento(SQLModel, table=True):
     __tablename__ = "municipais_dados_sinteticos"
