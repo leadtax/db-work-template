@@ -3,9 +3,7 @@ from contextlib import contextmanager
 from typing import Generator
 
 from dotenv import load_dotenv
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Row, select
 from sqlmodel import Session, create_engine
 
 from db_work_template.db.model import Documento
@@ -19,7 +17,6 @@ BASEPORTAL = os.getenv("BASEPORTAL")
 engine = create_engine(DATABASE_URL_MYSQL + BASEAPI)
 my_sql_hml = create_engine(DATABASE_URL_MYSQL + BASEPORTAL)
 
-async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 @contextmanager
@@ -32,6 +29,8 @@ def update_escrituracao_status(session: Session, status: bool, mensagem: str, _i
     stmt = select(Documento).where(Documento.id == _id)
     result = session.exec(stmt).first()
     if result:
+        if isinstance(result, Row):
+            result = result[0]
         try:
             result.status_escrit = status
             result.descri_escrit = mensagem
